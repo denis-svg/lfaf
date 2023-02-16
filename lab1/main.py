@@ -16,7 +16,7 @@ if __name__ == "__main__":
     N = 10
     for i in range(1, N + 1):
         string = g.generateString(i)
-        print(f"""{string}:{automaton.isAccepted("abaab")}""")
+        print(f"""{string}:{automaton.isAccepted(string)}""")
 
 
 
