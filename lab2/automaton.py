@@ -79,7 +79,7 @@ class FiniteAutomaton:
         for key in dfa:
             for key2 in conv:
                 if conv[key2] == set(dfa[key]):
-                    dfa[key] = key2
+                    dfa[key] = [key2]
         
         converted_dfa_fin_states = []
         for st in dfa_fin_states:
