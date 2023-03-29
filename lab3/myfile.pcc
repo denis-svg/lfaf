@@ -1,7 +1,1 @@
-a = 4 + (c + 6) / 3.213;
-b = 5;
-def fdasd(a, b){
-    return True;
-}
-if f(a, b) and b==1 or c >= 1{
-    print("hello world"); }
+a=b

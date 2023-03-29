@@ -52,12 +52,12 @@ class Lexer:
             if self.current_char == ';':
                 self.tokens.append(Token(TokenType.ENDOFLINE ,self.current_char))
                 self.advance()
-            if self.current_char == '=':
+            elif self.current_char == '=':
                 self.advance()
                 if self.current_char == '=':
                     self.tokens.append(Token(TokenType.COMPARISONOP , '=='))
                 else:
-                    self.tokens.append(Token(TokenType.ASSIGMENT ,self.current_char))
+                    self.tokens.append(Token(TokenType.ASSIGMENT , '='))
             elif self.current_char == '{':
                 self.tokens.append(Token(TokenType.START ,self.current_char))
                 self.advance()
@@ -128,7 +128,9 @@ class Lexer:
 
     def getWord(self):
         word = ''
-        while (not self.current_char.isspace()) and (self.current_char not in SPECIAL) and (self.current_char != None):
+        while  (self.current_char != None):
+            if (self.current_char.isspace()) or (self.current_char in SPECIAL):
+                break
             word += self.current_char
             self.advance()
         return word
