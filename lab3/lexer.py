@@ -56,6 +56,7 @@ class Lexer:
                 self.advance()
                 if self.current_char == '=':
                     self.tokens.append(Token(TokenType.COMPARISONOP , '=='))
+                    self.advance()
                 else:
                     self.tokens.append(Token(TokenType.ASSIGMENT , '='))
             elif self.current_char == '{':
@@ -69,6 +70,7 @@ class Lexer:
                 self.advance()
                 if self.current_char in "=":
                     self.tokens.append(Token(TokenType.COMPARISONOP , previous_char + self.current_char))
+                    self.advance()
                 else:
                     self.tokens.append(Token(TokenType.COMPARISONOP , previous_char))
 
