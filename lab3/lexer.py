@@ -1,30 +1,27 @@
-from enum import Enum
+from enum import Enum, auto
 
 class TokenType(Enum):
-    NUMBER = 1
-    PLUS = 2
-    MINUS = 3
-    DIV = 4
-    LPAREN = 5
-    RPAREN = 6
-    ASSIGMENT = 10
-    FUNDEF = 11
-    ENDOFLINE = 12
-    COMMA = 13
-    SEMICOL = 14
-    STRING = 17
-    NAME = 19
-    BOOL = 20
-    START = 21
-    END = 22
-    IF = 23
-    ARGSTART = 24
-    ARGEND = 25
-    MULT = 26
-    LOGICOP = 28
+    NUMBER = auto()
+    PLUS = auto()
+    MINUS = auto()
+    DIV = auto()
+    LPAREN = auto()
+    RPAREN = auto()
+    ASSIGMENT = auto()
+    FUNDEF = auto()
+    ENDOFLINE = auto()
+    COMMA = auto()
+    SEMICOL = auto()
+    STRING = auto()
+    NAME = auto()
+    BOOL = auto()
+    START = auto()
+    END = auto()
+    IF = auto()
+    MULT = auto()
+    LOGICOP = auto()
+    COMPARISONOP = auto()
 
-DIGITS = "0123456789"
-WHITESPACE = ' \n\t'
 SPECIAL = '!@#$%^&*()-+=;?,."{ }'
 
 class Token:
@@ -56,16 +53,26 @@ class Lexer:
                 self.tokens.append(Token(TokenType.ENDOFLINE ,self.current_char))
                 self.advance()
             if self.current_char == '=':
-                self.tokens.append(Token(TokenType.ASSIGMENT ,self.current_char))
                 self.advance()
+                if self.current_char == '=':
+                    self.tokens.append(Token(TokenType.COMPARISONOP , '=='))
+                else:
+                    self.tokens.append(Token(TokenType.ASSIGMENT ,self.current_char))
             elif self.current_char == '{':
                 self.tokens.append(Token(TokenType.START ,self.current_char))
                 self.advance()
             elif self.current_char == '}':
                 self.tokens.append(Token(TokenType.END ,self.current_char))
                 self.advance()
+            elif self.current_char in "<>!":
+                previous_char = self.current_char
+                self.advance()
+                if self.current_char in "=":
+                    self.tokens.append(Token(TokenType.COMPARISONOP , previous_char + self.current_char))
+                else:
+                    self.tokens.append(Token(TokenType.COMPARISONOP , previous_char))
 
-            elif self.current_char in WHITESPACE:
+            elif self.current_char.isspace():
                 self.advance()
             
             elif self.current_char in '+-*/':
@@ -93,7 +100,7 @@ class Lexer:
                 self.tokens.append(Token(TokenType.COMMA ,self.current_char))
                 self.advance()
 
-            elif self.current_char in DIGITS:
+            elif self.current_char.isdigit():
                 self.tokens.append(Token(TokenType.NUMBER ,self.getNumber()))
             elif self.current_char.isalpha():
                 name = self.getWord()
@@ -121,14 +128,14 @@ class Lexer:
 
     def getWord(self):
         word = ''
-        while (self.current_char not in WHITESPACE) and (self.current_char not in SPECIAL) and (self.current_char != None):
+        while (not self.current_char.isspace()) and (self.current_char not in SPECIAL) and (self.current_char != None):
             word += self.current_char
             self.advance()
         return word
 
     def getNumber(self):
         num = ''
-        while (self.current_char in DIGITS) or (self.current_char in '.'):
+        while (self.current_char.isdigit()) or (self.current_char in '.'):
             num += self.current_char
             self.advance()
         return num
