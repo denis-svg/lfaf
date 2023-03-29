@@ -61,7 +61,42 @@ if f(a, b) and b==1 or c >= 1{
 ```
 
 This is how my source code has been tokenized
-![image](https://user-images.githubusercontent.com/64483300/228543616-30992299-a8d0-4116-bf28-6c365999b64d.png)
+```text
+TokenType.NAME:a
+TokenType.ASSIGMENT:=
+TokenType.NUMBER:4
+TokenType.PLUS:+
+TokenType.LPAREN:(
+TokenType.NAME:c
+TokenType.PLUS:+
+TokenType.NUMBER:6
+TokenType.RPAREN:)
+TokenType.DIV:/
+TokenType.NUMBER:3.213
+TokenType.ENDOFLINE:;
+TokenType.NAME:b
+TokenType.ASSIGMENT:=
+TokenType.NUMBER:5
+TokenType.ENDOFLINE:;
+TokenType.FUNDEF:def
+TokenType.NAME:fdasd
+TokenType.LPAREN:(
+TokenType.NAME:a
+TokenType.COMMA:,
+TokenType.COMPARISONOP:==
+TokenType.NUMBER:1
+TokenType.LOGICOP:or
+TokenType.NAME:c
+TokenType.COMPARISONOP:>=
+TokenType.NUMBER:1
+TokenType.START:{
+TokenType.NAME:print
+TokenType.LPAREN:(
+TokenType.STRING:hello world
+TokenType.RPAREN:)
+TokenType.ENDOFLINE:;
+TokenType.END:}
+```
 
 
 <a id="orgc2bc5f8"></a>
