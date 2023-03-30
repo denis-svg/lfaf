@@ -47,7 +47,6 @@ class Lexer:
     def getTokens(self):
         # current_char is None at the begining so it is needed to advance
         self.advance()
-        i = 0
         while self.current_char != None:
             if self.current_char == ';':
                 self.tokens.append(Token(TokenType.ENDOFLINE ,self.current_char))
@@ -121,6 +120,10 @@ class Lexer:
                 self.advance()       
 
     def getString(self):
+        """this function is called only when current charcter is "
+            the while loop will add consecutive chars and form a string until current_char is "
+            after that the string is returned 
+        """
         string = ''
         self.advance()
         while self.current_char != '"':
@@ -129,6 +132,11 @@ class Lexer:
         return string
 
     def getWord(self):
+        """this function is called only when current charcter is alfa
+            the while loop will add consecutive chars and form a word until current_char is either a space or a special
+            after that the word is returned
+            Words that can be formed: [a..z(0-9a-z)*] 
+        """
         word = ''
         while  (self.current_char != None):
             if (self.current_char.isspace()) or (self.current_char in SPECIAL):
@@ -138,6 +146,11 @@ class Lexer:
         return word
 
     def getNumber(self):
+        """this function is called only when current charcter is a digit
+            the while loop will add consecutive chars and form a number until current_char is not a digit not a dot a
+            after that the number is returned
+            Numbers that can be formed: 1.312, 3213;
+        """
         num = ''
         while (self.current_char.isdigit()) or (self.current_char in '.'):
             num += self.current_char
@@ -147,7 +160,7 @@ class Lexer:
     def print(self):
         for token in self.tokens:
             if token.type not in [TokenType.ENDOFLINE, TokenType.START, TokenType.END]:
-                print(token, end=', ')
+                print(token)
             else:
                 print(token)
 
