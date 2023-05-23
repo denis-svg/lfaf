@@ -1,4 +1,4 @@
-- [Lab 3: A simple lexer](#org5cfc323)
+- [Lab 4: Chomsky Normal Form](#org5cfc323)
 - [Theory](#org74327b2)
   - [Lexical analysis](#org732ae06)
 - [Objectives](#org5545cea)
@@ -10,7 +10,7 @@
 
 <a id="org5cfc323"></a>
 
-# Lab 3: A simple lexer
+# Lab 4: Chomsky Normal Form
 
 Course
 : Formal Languages &amp; Finite Automata
@@ -26,91 +26,78 @@ Author
 
 <a id="org732ae06"></a>
 
-## Lexical analysis
+## Chomsky Normal Form
 
-Lexical analysis, also known as tokenization, is the process of converting a sequence of characters into a sequence of tokens (meaningful units) in order to facilitate the analysis of a text or program. The tokens can be thought of as the basic building blocks of a language, and are typically classified into different categories such as identifiers, keywords, literals, operators, and punctuation symbols.
+Chomsky Normal Form (CNF) is a way of representing a context-free grammar (CFG) in a particular form. A grammar is said to be in CNF if all of its productions are of the form:
 
-The main goal of lexical analysis is to identify and group these tokens based on their semantic meaning, and to provide a structured representation of the input text that can be easily processed by subsequent stages of a compiler or interpreter. This process involves several steps, such as removing whitespace and comments, identifying and classifying tokens, and recording information about each token such as its location in the source code and any associated metadata.
+   A → BC, where A, B, and C are nonterminal symbols
+   A → a, where A is a nonterminal symbol and a is a terminal symbol
+   S → ε, where S is the start symbol of the grammar and ε represents the empty string.
 
-Lexical analysis is a crucial component of most programming languages and is typically the first step in the compilation or interpretation process. It is also used in natural language processing to analyze and understand the meaning of text.
+In other words, each production in a grammar in CNF has either two nonterminal symbols on the right-hand side or a single terminal symbol on the right-hand side.
+
+The conversion of a CFG into Chomsky Normal Form involves a series of steps such as removing epsilon productions, eliminating unit productions, and transforming long productions into shorter ones. This conversion is useful for many parsing algorithms that require a CFG to be in CNF, as it simplifies the parsing process and makes it more efficient.
 
 <a id="org5545cea"></a>
 
 # Objectives
 
--   [X] Implement a lexer and show how it works.
+-   [X] Implement a method for normalizing an input grammar by the rules of CNF. 
 
 
 <a id="org923194d"></a>
 
 # Results
 
-I wrote a lexer for python-like syntax plus some elements of c language, hence, all the example strings are valid python code.
-
-This example contains everything that my language has. Every line of code should end with semicolon therefore we can stack everything into one line.
-Functions and if statements content should be contained in open and closed curly brackets. Everything else is syntax like python.
-
-```text
-a = 4 + (c + 6) / 3.213;
-b = 5;
-def fdasd(a, b){
-    return True;
-}
-if f(a, b) and b==1 or c >= 1{
-    print("hello world"); }
+Variant 19
+```
+VN = ['S', 'A', 'B', 'C', 'E']
+VT = ['a', 'd']
+Production Rules
+S --> [['d', 'B'], ['B']]
+A --> [['d'], ['d', 'S'], ['a', 'A', 'd', 'C', 'B']]
+B --> [['a', 'C'], ['b', 'A'], ['A', 'C']]
+C --> [[]]
+E --> ['A', 'S']
 ```
 
-This is how my source code has been tokenized
-```text
-TokenType.NAME:a
-TokenType.ASSIGMENT:=
-TokenType.NUMBER:4
-TokenType.PLUS:+
-TokenType.LPAREN:(
-TokenType.NAME:c
-TokenType.PLUS:+
-TokenType.NUMBER:6
-TokenType.RPAREN:)
-TokenType.DIV:/
-TokenType.NUMBER:3.213
-TokenType.ENDOFLINE:;
-TokenType.NAME:b
-TokenType.ASSIGMENT:=
-TokenType.NUMBER:5
-TokenType.ENDOFLINE:;
-TokenType.FUNDEF:def
-TokenType.NAME:fdasd
-TokenType.LPAREN:(
-TokenType.NAME:a
-TokenType.COMMA:,
-TokenType.COMPARISONOP:==
-TokenType.NUMBER:1
-TokenType.LOGICOP:or
-TokenType.NAME:c
-TokenType.COMPARISONOP:>=
-TokenType.NUMBER:1
-TokenType.START:{
-TokenType.NAME:print
-TokenType.LPAREN:(
-TokenType.STRING:hello world
-TokenType.RPAREN:)
-TokenType.ENDOFLINE:;
-TokenType.END:}
+After applying Chomsky normal form
 ```
+VN = ['S', 'A', 'B', 'C', 'E', 'X11', 'X13', 'X15']
+VT = ['a', 'd']
 
+Production Rules
+S --> [['d', 'B'], ['B'], ['a', 'C'], ['b', 'A'], ['A', 'C']]
+A --> [['d'], ['d', 'S'], ['a', 'X15']]
+B --> [['a', 'C'], ['b', 'A'], ['A', 'C']]
+C --> []
+E --> ['A', 'S', ['d'], ['d', 'S'], ['a', 'X15'], ['d', 'B'], ['B'], ['a', 'C'], ['b', 'A'], ['A', 'C']]
+X11 --> [['C', 'B']]
+X13 --> [['d', 'X11']]
+X15 --> [['A', 'X13']]
+
+```
 
 <a id="orgc2bc5f8"></a>
 
 # Implementation
 
-This code implements a lexer, which is a program that takes source code as input and breaks it down into a sequence of tokens that can be processed by a parser. The lexer is implemented as a Python class called Lexer, which takes a string of source code as input when it is initialized.
+Step 1: Eliminate all productions with epsilon
 
-The Lexer class has several methods for processing the input string and generating a list of tokens. The getTokens() method is the main entry point for the lexer, and it processes the input string character by character to generate a list of tokens.
+In this step, the function removes all epsilon productions from the grammar. An epsilon production is a production of the form A → ε, where A is a nonterminal symbol and ε represents the empty string. The function removes such productions from the grammar by iterating through all nonterminal symbols in the grammar and removing any empty productions that they have.
 
-The advance() method is used to move the current character pointer to the next character in the input string. The getNumber() method is used to extract a number token from the input string, the getWord() method is used to extract a name token from the input string, and the getString() method is used to extract a string token from the input string.
+Step 2: Replace all unit productions A -> B with A -> C, where C -> B is a production
 
-The TokenType class defines an enumeration of all the possible token types that the lexer can generate, such as NUMBER, PLUS, MINUS, DIV, LPAREN, RPAREN, ASSIGMENT, FUNDEF, ENDOFLINE, COMMA, SEMICOL, STRING, NAME, BOOL, START, END, IF, MULT, LOGICOP, and COMPARISONOP.
+In this step, the function replaces all unit productions of the form A → B, where A and B are nonterminal symbols, with productions of the form A → C, where C is a nonterminal symbol that produces B. The function does this by first identifying all unit productions in the grammar and then replacing them with the corresponding productions that use non-unit productions.
 
-The Token class represents a single token generated by the lexer. It has two properties, type and value, which represent the type of the token and its value, respectively.
+Step 3: Replace all non-unit productions A -> w with A -> BC, where B -> x and C -> y are productions
+
+In this step, the function replaces all non-unit productions of the form A → w, where w is a string of one or more symbols (either terminal or nonterminal), with productions of the form A → BC, where B and C are nonterminal symbols and each symbol in w is either a terminal symbol or a new nonterminal symbol. The function does this by splitting the string w into pairs of symbols (or single symbols if the string has odd length), introducing new nonterminal symbols as necessary to represent each pair, and then replacing the original production with a new set of productions that use the new nonterminal symbols.
+
+Step 4: Eliminate any remaining unit productions
+
+In this step, the function eliminates any remaining unit productions that may have been introduced in Step 2 or Step 3. The function does this by iterating through all nonterminal symbols in the grammar and removing any unit productions that they have. If any new unit productions are created as a result of this removal, the function repeats the process until no more unit productions remain.
+
+After these four steps, the grammar should be in Chomsky Normal Form, with all productions in the required format.
 
 
